@@ -1,16 +1,25 @@
+/* origin code from stackexchange 
+ https://codereview.stackexchange.com/questions/245941/arraylist-implementation-in-c
+ https://codereview.stackexchange.com/questions/160434/c-generic-arraylist-dynamic-array-implementations
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <string.h>
 
-typedef struct List List;
-typedef struct List* ListPtr;
-struct List {
+#ifndef STRUCT_ARRAYLIST_H
+#define STRUCT_ARRAYLIST_H
+
+typedef struct {
     int capacity;
     int size;
     int *arr;
-};
+} List;
+
+typedef List* ListPtr;
+
 
 ListPtr initialiseWithCapacity(int initialCapacity) {
     ListPtr a = malloc(sizeof *a);
@@ -330,3 +339,5 @@ bool display(ListPtr a) {
     printf("%s \n", toString(a));
     return true;
 }
+
+#endif

@@ -21,20 +21,75 @@ typedef struct {
 typedef List* ListPtr;
 
 
-ListPtr initialiseWithCapacity(int initialCapacity) {
+ListPtr initializeWithCapacity(int capacity) {
     ListPtr a = malloc(sizeof *a);
-    a->capacity = initialCapacity;
+    a->capacity = capacity;
     a->arr = malloc(a->capacity * sizeof *(a->arr));
     a->size = 0;
     return a;
 }
 
-ListPtr initialise() {
-    return initialiseWithCapacity(10);
+int get(ListPtr a, int index) {
+    if(index < 0)
+        index = a->size + index;
+    
+    if(index >= a->size || index < 0)
+        return -1;
+    
+    return a->arr[index];
 }
 
-ListPtr initialiseWithArray(int arr[], int length) {
-    ListPtr a = initialiseWithCapacity(length);
+bool set(ListPtr a, int index, int value) {
+    if(index < 0)
+        index = a->size + index;
+    
+    if(index >= a->size || index < 0)
+        return false;
+    
+    a->arr[index] = value;
+    return true;
+}
+
+bool ensureCapacity(ListPtr a, int minCapacity) {
+    if(minCapacity > a->capacity) {
+        a->capacity += (a->capacity >> 1);
+        if(a->capacity < minCapacity)
+            a->capacity = minCapacity;
+        a->arr = realloc(a->arr, a->capacity * sizeof *(a->arr));
+    }
+    return true;
+}
+
+bool append(ListPtr a, int n) {
+    ensureCapacity(a, a->size + 1);
+    a->arr[a->size++] = n;
+    return true;
+}
+
+
+bool clear(ListPtr a) {
+    free(a->arr);
+    a->arr = malloc(0);
+    a->capacity = 0;
+    a->size = 0;
+    return true;
+}
+
+int len(ListPtr a) {
+    return a->size;
+}
+
+int cap(ListPtr a) {
+    return a->capacity;
+}
+
+
+ListPtr initialize() {
+    return initializeWithCapacity(10);
+}
+
+ListPtr initializeWithArray(int arr[], int length) {
+    ListPtr a = initializeWithCapacity(length);
     for(int i = 0;  i < length; i++)
         a->arr[a->size++] = arr[i];
     return a;
@@ -43,7 +98,7 @@ ListPtr initialiseWithArray(int arr[], int length) {
 ListPtr values(int n, ...) {
     va_list valist;
     va_start(valist, n);
-    ListPtr a = initialiseWithCapacity(n);
+    ListPtr a = initializeWithCapacity(n);
     for(int i = 0; i < n; i++) {
         a->arr[a->size++] = va_arg(valist, int);
     }
@@ -53,8 +108,8 @@ ListPtr values(int n, ...) {
 
 ListPtr range(int start, int stop, int step) {
     if(step == 0)
-        return initialiseWithCapacity(0);
-    ListPtr a = initialiseWithCapacity( abs(stop - start) / abs(step) + 1 );
+        return initializeWithCapacity(0);
+    ListPtr a = initializeWithCapacity( abs(stop - start) / abs(step) + 1 );
     if(step > 0) {
         for(int i = start; i < stop; i += step)
             a->arr[a->size++] = i;
@@ -68,8 +123,8 @@ ListPtr range(int start, int stop, int step) {
 
 ListPtr slice(ListPtr a, int start, int stop, int step) {
     if(step == 0 || start < 0 || stop < -1 || start >= a->size || stop >= a->size)
-        return initialiseWithCapacity(0);
-    ListPtr b = initialiseWithCapacity( abs(stop - start) / abs(step) + 1 );
+        return initializeWithCapacity(0);
+    ListPtr b = initializeWithCapacity( abs(stop - start) / abs(step) + 1 );
     if(step > 0) {
         for(int i = start; i < stop; i += step)
             b->arr[b->size++] = a->arr[i];
@@ -81,23 +136,7 @@ ListPtr slice(ListPtr a, int start, int stop, int step) {
     return b;
 }
 
-bool clear(ListPtr a) {
-    free(a->arr);
-    a->arr = malloc(0);
-    a->capacity = 0;
-    a->size = 0;
-    return true;
-}
 
-bool ensureCapacity(ListPtr a, int minCapacity) {
-    if(minCapacity > a->capacity) {
-        a->capacity += (a->capacity >> 1);
-        if(a->capacity < minCapacity)
-            a->capacity = minCapacity;
-        a->arr = realloc(a->arr, a->capacity * sizeof *(a->arr));
-    }
-    return true;
-}
 
 bool trimToSize(ListPtr a) {
     a->capacity = a->size;
@@ -114,11 +153,6 @@ bool fill(ListPtr a, int value, int n) {
     return true;
 }
 
-bool append(ListPtr a, int n) {
-    ensureCapacity(a, a->size + 1);
-    a->arr[a->size++] = n;
-    return true;
-}
 
 bool extendWithArray(ListPtr a, int arr[], int length) {
     ensureCapacity(a, a->size + length);
@@ -154,7 +188,7 @@ bool insert(ListPtr a, int index, int n) {
 }
 
 ListPtr copy(ListPtr a) {
-    ListPtr b = initialiseWithCapacity(a->capacity);
+    ListPtr b = initializeWithCapacity(a->capacity);
     extendWithArray(b, a->arr, a->size);
     return b;
 }
@@ -228,26 +262,6 @@ bool delete(ListPtr a, int value) {
     return pop(a, index);
 }
 
-int get(ListPtr a, int index) {
-    if(index < 0)
-        index = a->size + index;
-    
-    if(index >= a->size || index < 0)
-        return -1;
-    
-    return a->arr[index];
-}
-
-bool set(ListPtr a, int index, int value) {
-    if(index < 0)
-        index = a->size + index;
-    
-    if(index >= a->size || index < 0)
-        return false;
-    
-    a->arr[index] = value;
-    return true;
-}
 
 bool reverse(ListPtr a) {
     for(int start = 0, stop = a->size-1; start < stop; start++, stop--) {
@@ -302,13 +316,6 @@ int sum(ListPtr a) {
     return s;
 }
 
-int len(ListPtr a) {
-    return a->size;
-}
-
-int cap(ListPtr a) {
-    return a->capacity;
-}
 
 int* toArray(ListPtr a) {
     int *b = malloc(a->size * sizeof *b);

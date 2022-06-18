@@ -1,10 +1,10 @@
 #include "arraylist.h"
 
-void initialiseDemo() {
-    printf("\n\t\t =============== START DEMO - initialise() =============== \n\n\n");
+void initializeDemo() {
+    printf("\n\t\t =============== START DEMO - initialize() =============== \n\n\n");
     
-    printf("Initialising List a with initialise() \n\n");
-    List *a = initialise();
+    printf("Initialising List a with initialize() \n\n");
+    List *a = initialize();
     
     printf("\t a = %s \n", toString(a));
     printf("\t Number of elements = %d \n", len(a));
@@ -18,14 +18,14 @@ void initialiseDemo() {
     printf("\t Number of elements = %d \n", len(a));
     printf("\t Capacity of a = %d \n", cap(a));
     
-    printf("\n\n\t\t =============== END DEMO - initialise() =============== \n\n\n");
+    printf("\n\n\t\t =============== END DEMO - initialize() =============== \n\n\n");
 }
 
-void initialiseWithCapacityDemo() {
-    printf("\n\t\t =============== START DEMO - initialiseWithCapacity() =============== \n\n\n");
+void initializeWithCapacityDemo() {
+    printf("\n\t\t =============== START DEMO - initializeWithCapacity() =============== \n\n\n");
     
-    printf("Initialising List a with initialiseWithCapacity(0) \n\n");
-    List *a = initialiseWithCapacity(0);
+    printf("Initialising List a with initializeWithCapacity(0) \n\n");
+    List *a = initializeWithCapacity(0);
     
     printf("\t a = %s \n", toString(a));
     printf("\t Number of elements = %d \n", len(a));
@@ -42,23 +42,23 @@ void initialiseWithCapacityDemo() {
     printf("\t Number of elements = %d \n", len(a));
     printf("\t Capacity of a = %d \n", cap(a));
     
-    printf("\n\n\t\t =============== END DEMO - initialiseWithCapacity() =============== \n\n\n");
+    printf("\n\n\t\t =============== END DEMO - initializeWithCapacity() =============== \n\n\n");
 }
 
-void initialiseWithArrayDemo() {
-    printf("\n\t\t =============== START DEMO - initialiseWithArray() =============== \n\n\n");
+void initializeWithArrayDemo() {
+    printf("\n\t\t =============== START DEMO - initializeWithArray() =============== \n\n\n");
     
     printf("Initialising int arr[] with numbers from 1 to 18 \n\n");
     int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18};
     
-    printf("Initialising List a with arr[] using initialiseWithArray(arr, 18) \n\n");
-    List *a = initialiseWithArray(arr, 18);
+    printf("Initialising List a with arr[] using initializeWithArray(arr, 18) \n\n");
+    List *a = initializeWithArray(arr, 18);
     
     printf("\t a = %s \n", toString(a));
     printf("\t Number of elements = %d \n", len(a));
     printf("\t Capacity of a = %d \n", cap(a));
     
-    printf("\n\n\t\t =============== END DEMO - initialiseWithArray() =============== \n\n\n");
+    printf("\n\n\t\t =============== END DEMO - initializeWithArray() =============== \n\n\n");
 }
 
 void valuesDemo() {
@@ -172,8 +172,8 @@ void ensureCapacityDemo() {
 void trimToSizeDemo() {
     printf("\n\t\t =============== START DEMO - trimToSize() =============== \n\n\n");
     
-    printf("Initialising List a with initialise() \n\n");
-    List *a = initialise();
+    printf("Initialising List a with initialize() \n\n");
+    List *a = initialize();
     
     printf("\t a = %s \n", toString(a));
     printf("\t Number of elements = %d \n", len(a));
@@ -202,8 +202,8 @@ void trimToSizeDemo() {
 void fillDemo() {
     printf("\n\t\t =============== START DEMO - fill() =============== \n\n\n");
     
-    printf("Initialising List a with initialise() \n\n");
-    List *a = initialise();
+    printf("Initialising List a with initialize() \n\n");
+    List *a = initialize();
     
     printf("\t a = %s \n", toString(a));
     printf("\t Number of elements = %d \n", len(a));
@@ -229,8 +229,8 @@ void fillDemo() {
 void appendDemo() {
     printf("\n\t\t =============== START DEMO - append() =============== \n\n\n");
     
-    printf("Initialising List a with initialiseWithCapacity(0) \n\n");
-    List *a = initialiseWithCapacity(0);
+    printf("Initialising List a with initializeWithCapacity(0) \n\n");
+    List *a = initializeWithCapacity(0);
     
     printf("\t a = %s \n", toString(a));
     printf("\t Number of elements = %d \n", len(a));
@@ -396,8 +396,8 @@ void lastIndexOfDemo() {
     printf("Initialising int arr[] with {0, 1, 2, 2, 3, 4, 5, 6, 2, 7, 8, 9} \n\n");
     int arr[] = {0, 1, 2, 2, 3, 4, 5, 6, 2, 7, 8, 9};
     
-    printf("Initialising List a with arr[] using initialiseWithArray(arr, 12) \n\n");
-    List *a = initialiseWithArray(arr, 12);
+    printf("Initialising List a with arr[] using initializeWithArray(arr, 12) \n\n");
+    List *a = initializeWithArray(arr, 12);
     
     printf("\t a = %s \n", toString(a));
     printf("\t Number of elements = %d \n", len(a));
@@ -680,8 +680,8 @@ void replaceDemo() {
     printf("Initialising int arr[] with {0, 1, 2, 3, 4, 5, 6, 1, 2, 2, 3, 4, 2, 6, 2} \n\n");
     int arr[] = {0, 1, 2, 3, 4, 5, 6, 1, 2, 2, 3, 4, 2, 6, 2};
     
-    printf("Initialising List a with arr[] using initialiseWithArray(arr, 15) \n\n");
-    List *a = initialiseWithArray(arr, 15);
+    printf("Initialising List a with arr[] using initializeWithArray(arr, 15) \n\n");
+    List *a = initializeWithArray(arr, 15);
     
     printf("\t a = %s \n", toString(a));
     printf("\t Number of elements = %d \n", len(a));
@@ -757,8 +757,8 @@ void countDemo() {
     printf("Initialising int arr[] with {1, 2, 2, 3, 3, 3, 5, 5, 5, 5} \n\n");
     int arr[] = {1, 2, 2, 3, 3, 3, 5, 5, 5, 5};
     
-    printf("Initialising List a with arr[] using initialiseWithArray(arr, 10) \n\n");
-    List *a = initialiseWithArray(arr, 10);
+    printf("Initialising List a with arr[] using initializeWithArray(arr, 10) \n\n");
+    List *a = initializeWithArray(arr, 10);
     
     printf("\t a = %s \n", toString(a));
     printf("\t Number of elements = %d \n", len(a));
@@ -897,11 +897,11 @@ void displayDemo() {
 
 int main(void) {
     
-    initialiseDemo();
+    initializeDemo();
     
-    initialiseWithCapacityDemo();
+    initializeWithCapacityDemo();
     
-    initialiseWithArrayDemo();
+    initializeWithArrayDemo();
     
     valuesDemo();
     

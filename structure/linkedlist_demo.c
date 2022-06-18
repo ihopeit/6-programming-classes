@@ -11,7 +11,7 @@ struct node * insert_begin(struct node *p, int element);
 void delete_begin(struct node *p);
 void delete_end(struct node *p);
 void l_delete(struct node *p, int element);
-void display(struct node *p);
+void display(struct node *p); // 显示所有元素
 
 int main()
 { 
@@ -69,18 +69,17 @@ int main()
 
  struct node * insert_end(struct node *p1, int ele)
  {
-	  struct node *tmp = p1;
-	  struct node *tmp1 = (struct node*)malloc(sizeof(struct node));
-	  tmp1->data=ele;
-	  tmp1->next=NULL;
-	  if(p1 == NULL)
-		p1 = tmp1;
-	  else
-		{
-			while(tmp->next!=NULL)
-				tmp=tmp->next;
-		 	tmp->next=tmp1;
-		 }
+	struct node *tmp = p1;
+	struct node *tmp1 = (struct node*)malloc(sizeof(struct node));
+	tmp1->data = ele;
+	tmp1->next = NULL;
+	if(p1 == NULL)
+        p1 = tmp1;
+	else {
+        while(tmp->next != NULL)
+            tmp = tmp->next;
+        tmp->next = tmp1;
+	}
     return p1;
  }
 

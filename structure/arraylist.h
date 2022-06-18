@@ -46,21 +46,21 @@ bool append(ListPtr a, int n) {
 }
 
 int get(ListPtr a, int index) {
-    if(index < 0)
+    if(index < 0) // 允许从尾部反向访问
         index = a->size + index;
     
     if(index >= a->size || index < 0)
-        return -1;
+        return -1; // 异常条件返回 -1
     
     return a->arr[index];
 }
 
 bool set(ListPtr a, int index, int value) {
-    if(index < 0)
+    if(index < 0) // 允许从尾部反向访问
         index = a->size + index;
     
     if(index >= a->size || index < 0)
-        return false;
+        return false; // 异常条件返回 false
     
     a->arr[index] = value;
     return true;

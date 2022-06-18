@@ -20,13 +20,29 @@ typedef struct {
 
 typedef List* ListPtr;
 
-
 ListPtr initializeWithCapacity(int capacity) {
     ListPtr a = malloc(sizeof *a);
     a->capacity = capacity;
     a->arr = malloc(a->capacity * sizeof *(a->arr));
     a->size = 0;
     return a;
+}
+
+bool ensureCapacity(ListPtr a, int minCapacity) {
+    if(minCapacity > a->capacity) {
+        a->capacity = a->capacity << 1; // 增长两倍容量
+        if(a->capacity < minCapacity)
+            a->capacity = minCapacity;
+        // 按照新的容量空间，重新分配内存（保留原有数据）
+        a->arr = realloc(a->arr, a->capacity * sizeof(int));
+    }
+    return true;
+}
+
+bool append(ListPtr a, int n) {
+    ensureCapacity(a, a->size + 1); //确保容量不小于 数据量 + 1
+    a->arr[a->size++] = n;
+    return true;
 }
 
 int get(ListPtr a, int index) {
@@ -50,22 +66,19 @@ bool set(ListPtr a, int index, int value) {
     return true;
 }
 
-bool ensureCapacity(ListPtr a, int minCapacity) {
-    if(minCapacity > a->capacity) {
-        a->capacity += (a->capacity >> 1);
-        if(a->capacity < minCapacity)
-            a->capacity = minCapacity;
-        a->arr = realloc(a->arr, a->capacity * sizeof *(a->arr));
-    }
+bool pop(ListPtr a, int index) {
+    if(index < 0)
+        index = a->size + index;
+    
+    if(index >= a->size || index < 0)
+        return false;
+    
+    for(int i = index; i < a->size-1; i++)
+        a->arr[i] = a->arr[i+1];
+    a->size--;
+    
     return true;
 }
-
-bool append(ListPtr a, int n) {
-    ensureCapacity(a, a->size + 1);
-    a->arr[a->size++] = n;
-    return true;
-}
-
 
 bool clear(ListPtr a) {
     free(a->arr);
@@ -238,20 +251,6 @@ bool isEqual(ListPtr a, ListPtr b) {
         if(a->arr[i] != b->arr[i])
             return false;
     }
-    return true;
-}
-
-bool pop(ListPtr a, int index) {
-    if(index < 0)
-        index = a->size + index;
-    
-    if(index >= a->size || index < 0)
-        return false;
-    
-    for(int i = index; i < a->size-1; i++)
-        a->arr[i] = a->arr[i+1];
-    a->size--;
-    
     return true;
 }
 

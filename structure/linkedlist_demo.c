@@ -4,20 +4,22 @@
 struct node{
     int data;
     struct node *next;
-}*p, *tmp, *tmp1;
+};
 
-void insert_end(int);
-void insert_begin(int);
-void delete_begin();
-void delete_end();
-void l_delete(int);
-void display();
+struct node * insert_end(struct node *p, int element);
+struct node * insert_begin(struct node *p, int element);
+void delete_begin(struct node *p);
+void delete_end(struct node *p);
+void l_delete(struct node *p, int element);
+void display(struct node *p);
 
 int main()
 { 
   int val,n;
   char c;
-  p=NULL;
+  struct node *p;
+  p = NULL;
+
   do{
      printf("\n************************* MENU ************************");
 	 printf("\n1.INSERT AT END");
@@ -32,28 +34,31 @@ int main()
 	 switch(n){
         case 1: printf("\nenter the value: ");
 			 scanf("%d",&val);
-			 insert_end(val);
+			 p = insert_end(p, val);
 			 break;
 		 case 2: printf("\nenter the value: ");
 			 scanf("%d",&val);
-			 insert_begin(val);
+			 p = insert_begin(p, val);
 			 break;
 		 case 3: printf("\nenter the value: ");
 			 scanf("%d",&val);
-			 l_delete(val);
+			 l_delete(p, val);
 			 break;
 		 case 4: 
-			 delete_begin();
+			 delete_begin(p);
 			 break;
 		 case 5: 
-			 delete_end();
+			 delete_end(p);
 			 break;
-		 case 6: display();
-		 		 break;
-		 case 7: exit(0);
-		 		 break;
-		 default: printf("\n Wrong Choice!");
-		 		  break;
+		 case 6: 
+             display(p);
+		 	 break;
+		 case 7: 
+            exit(0);
+		 	break;
+		 default: 
+            printf("\n Wrong Choice!");
+		 	break;
 		}
 	 printf("\n do u want to cont(y/n)... ");
      fflush(stdin); 
@@ -62,35 +67,37 @@ int main()
 
  }
 
- void insert_end(int ele)
+ struct node * insert_end(struct node *p1, int ele)
  {
-	  tmp=p;
-	  tmp1=(struct node*)malloc(sizeof(struct node));
+	  struct node *tmp = p1;
+	  struct node *tmp1 = (struct node*)malloc(sizeof(struct node));
 	  tmp1->data=ele;
 	  tmp1->next=NULL;
-	  if(p==NULL)
-		p=tmp1;
+	  if(p1 == NULL)
+		p1 = tmp1;
 	  else
 		{
 			while(tmp->next!=NULL)
 				tmp=tmp->next;
 		 	tmp->next=tmp1;
 		 }
+    return p1;
  }
 
-void insert_begin(int ele)
+struct node * insert_begin(struct node *p, int ele)
 {
-	 tmp=p;
-	 tmp1=(struct node*)malloc(sizeof(struct node));
+	 struct node *tmp = p;
+	 struct node *tmp1=(struct node*)malloc(sizeof(struct node));
 	 tmp1->data=ele;
 	 tmp1->next=p;
 	 p=tmp1;
+     return p;
 }
 
-void l_delete(int ele)
+void l_delete(struct node *p, int ele)
 {
-     tmp=p;
-	 struct node *pre=tmp;
+     struct node *tmp = p;
+	 struct node *pre = tmp;
 	 while(tmp!=NULL)
 		{if(tmp->data==ele)
 		    { if(tmp==p)
@@ -112,9 +119,9 @@ void l_delete(int ele)
 	  printf("\n no match found!! ");
  }
  
-void delete_begin()
+void delete_begin(struct node *p)
 {	
-	tmp=p;
+	struct node *tmp = p;
 	if(p==NULL)
 		printf("\n no element to be deleted!! ");
 	else
@@ -125,9 +132,9 @@ void delete_begin()
 
  }
  
-void delete_end()
+void delete_end(struct node *p)
 {	
-	tmp=p;
+	struct node *tmp = p;
 	struct node* pre;
 	if(p==NULL)
 		printf("\n no element to be deleted!! ");
@@ -151,11 +158,12 @@ void delete_end()
 
  }
 
-void display()
+void display(struct node *p)
 {
-	tmp=p;
- 	while(tmp!=NULL)
-		{printf("\n %d",tmp->data);
+    printf("display elements in p\n");
+	struct node *tmp = p;
+ 	while(tmp!=NULL){
+        printf("\n %d",tmp->data);
 	 	tmp=tmp->next;
-		}
+	}
 }

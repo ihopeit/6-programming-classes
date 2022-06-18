@@ -1,11 +1,7 @@
 #include "arraylist.h"
 
 int main(int argc, char** argv) {
-    List *a; // 先声明
-    a = initializeWithCapacity(3); // 后初始化
-
-    // 声明的同时初始化
-    List *b = initializeWithCapacity(5); 
+    List *a = initializeWithCapacity(3);
 
     printf("\t Init len = %d capacity = %d \n", len(a), cap(a));
     

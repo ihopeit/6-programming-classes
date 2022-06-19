@@ -40,8 +40,8 @@ int compare_pm25(const void* arg1, const void* arg2){
     return 0;
 }
 
-const char *MIN_MONTH = "2019-01-01";
-const char *MAX_MONTH = "2019-05-01";
+const char *MIN_MONTH = "2022-01-01";
+const char *MAX_MONTH = "2022-05-01";
 
 int main(int argc, char** argv){
     char *filename = "../pm25/PM25_By_Cities.csv";
@@ -106,8 +106,8 @@ int main(int argc, char** argv){
         //free (tokens);
     }
     
-    // TODO
     qsort(cities_pm25, index, sizeof(CityPM25), compare_pm25);
+    printf("\nSorted PM2.5 for each city, %s - %s:\n", MIN_MONTH, MAX_MONTH);
     while(cities_pm25 && cities_pm25->city){
         printf("city:%s pm2.5:%d \n", cities_pm25 ->city, cities_pm25 -> pm25);
         cities_pm25++;

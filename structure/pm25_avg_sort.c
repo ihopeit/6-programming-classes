@@ -31,6 +31,15 @@ int split (const char *txt, char delim, char ***tokens){
     return count;
 }
 
+int compare_pm25(const void* arg1, const void* arg2){ 
+    const CityPM25 *a = (const CityPM25*) arg1;
+    const CityPM25 *b = (const CityPM25*) arg2;
+
+    if (a->pm25 < b->pm25) return -1;
+    if (a->pm25 > b->pm25) return 1;
+    return 0;
+}
+
 const char *MIN_MONTH = "2019-01-01";
 const char *MAX_MONTH = "2019-05-01";
 
@@ -46,9 +55,12 @@ int main(int argc, char** argv){
     size_t linecap = 0; // line capacity
     ssize_t read;
     
+    CityPM25 *cities_pm25 = calloc(10, sizeof(CityPM25));
+
     char *city = NULL;
     int data_count = 0;
     long total_pm25 = 0L;
+    int index = 0;
     while ((read = getline(&line, &linecap, fp)) > 0){
         char **tokens;
         int count, i;
@@ -71,8 +83,14 @@ int main(int argc, char** argv){
                 total_pm25 += atoi(pm25);
 
                 if(data_count == 5){
-                    long average = total_pm25/data_count;
-                    printf("City:%s average pm2.5:%ld\n", city, average);
+                    int *average = (int *) malloc(sizeof(int));
+                    *average = total_pm25/data_count;
+                    printf("City:%s average pm2.5:%d\n", city, *average);
+
+                    CityPM25 *current_city_pm25 = (CityPM25 *) malloc(sizeof(CityPM25));
+                    current_city_pm25 -> city = city;
+                    current_city_pm25 -> pm25 = *average;
+                    cities_pm25[index++] = *current_city_pm25;
                 }
             }else {
                 //重新开始统计新城市的数据
@@ -82,13 +100,18 @@ int main(int argc, char** argv){
             }
             //printf ("City:%s month:%s pm2.5:%s\n", city, month, pm25);
         }
-        
 
         /* FIXME: freeing tokens */
         //for (i = 0; i < count; i++) free (tokens[i]);
         //free (tokens);
     }
-        
+    
+    // TODO
+    qsort(cities_pm25, index, sizeof(CityPM25), compare_pm25);
+    while(cities_pm25 && cities_pm25->city){
+        printf("city:%s pm2.5:%d \n", cities_pm25 ->city, cities_pm25 -> pm25);
+        cities_pm25++;
+    }
     
     fclose(fp);
     if (line)

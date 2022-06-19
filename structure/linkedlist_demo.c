@@ -1,6 +1,24 @@
 #include<stdio.h>
 #include<stdlib.h>
 
+struct astack { 
+	int top; 
+	unsigned size; 
+	int* array; 
+}; 
+
+struct queue{ 
+    int front, rear, size; 
+    unsigned actualSize; 
+    int* arr; 
+}; 
+
+void enqueue(struct queue * que, int item); // 在队列尾部插入元素
+int  dequeue(struct queue * que);  // 从队列头部删除一个元素
+int  front(struct queue * que);    // 获取队列的第一个元素（头部）
+int  rear(struct queue * que);     // 获取队列的最后一个元素（尾部）
+
+// linked list 
 struct node{
     int data;
     struct node *next;
@@ -69,16 +87,16 @@ int main()
 
  struct node * insert_end(struct node *p1, int ele)
  {
-	struct node *tmp = p1;
+	struct node *tmp = p1; // 指向节点的指针
 	struct node *tmp1 = (struct node*)malloc(sizeof(struct node));
-	tmp1->data = ele;
+	tmp1->data = ele; // 为创建的新节点 tmp1 设置 data 属性的值
 	tmp1->next = NULL;
 	if(p1 == NULL)
         p1 = tmp1;
-	else {
+	else { // 遍历到最后的叶子节点, tmp 指针移动到最后一个子节点
         while(tmp->next != NULL)
             tmp = tmp->next;
-        tmp->next = tmp1;
+        tmp->next = tmp1; // 在叶子节点上追加新的节点
 	}
     return p1;
  }

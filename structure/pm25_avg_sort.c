@@ -5,7 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct{
+const char *MIN_MONTH = "2022-01-01";
+const char *MAX_MONTH = "2022-05-01";
+
+//使用结构体来存储一个城市的 PM25 值
+typedef struct{ 
     char* city;
     int pm25;
 } CityPM25;
@@ -40,8 +44,6 @@ int compare_pm25(const void* arg1, const void* arg2){
     return 0;
 }
 
-const char *MIN_MONTH = "2022-01-01";
-const char *MAX_MONTH = "2022-05-01";
 
 int main(int argc, char** argv){
     char *filename = "../pm25/PM25_By_Cities.csv";
@@ -55,7 +57,7 @@ int main(int argc, char** argv){
     size_t linecap = 0; // line capacity
     ssize_t read;
     
-    CityPM25 *cities_pm25 = calloc(10, sizeof(CityPM25));
+    CityPM25 *cities_pm25 = calloc(12, sizeof(CityPM25));
 
     char *city = NULL;
     int data_count = 0;
@@ -71,18 +73,16 @@ int main(int argc, char** argv){
             char *month = tokens[1];
             char *pm25 = tokens[5];
 
-            if(city==NULL){
-                city = current_city;
-            }
-
-            // 同一个城市，且月份在1月到5月之间:
+            if(city==NULL) city = current_city;
+            
+            // 同一个城市，且月份在最小月份（1月）到最大月份（5月）之间:
             if(strcmp(current_city, city)==0 && 
                strcmp(month, MIN_MONTH) >= 0 &&
                strcmp(month, MAX_MONTH) <=0 ){
                 data_count++;
                 total_pm25 += atoi(pm25);
 
-                if(data_count == 5){
+                if(strcmp(month, MAX_MONTH) == 0){
                     int *average = (int *) malloc(sizeof(int));
                     *average = total_pm25/data_count;
                     printf("City:%s average pm2.5:%d\n", city, *average);

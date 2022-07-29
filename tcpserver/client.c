@@ -16,7 +16,7 @@ void func(int sockfd)
 	char response[MAX];
 	int n;
 	for (;;) {
-		bzero(buff, sizeof(buff));
+		memset(buff, 0, sizeof(buff));
 		printf("Enter the string : ");
 		n = 0;
 		while ((buff[n++] = getchar()) != '\n')
@@ -26,7 +26,7 @@ void func(int sockfd)
 			break;
 		}
 		write(sockfd, buff, sizeof(buff));
-		bzero(response, sizeof(response));
+		memset(response, 0, sizeof(response));
 		read(sockfd, response, sizeof(response));
 		printf("From Server : %s\n", response);
 	}
@@ -38,17 +38,17 @@ int main()
 	struct sockaddr_in servaddr, cli;
 
 	// socket create and verification
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	sockfd = socket(PF_INET, SOCK_STREAM, 0);
 	if (sockfd == -1) {
 		printf("socket creation failed...\n");
 		exit(0);
 	}
 	else
 		printf("Socket successfully created..\n");
-	bzero(&servaddr, sizeof(servaddr));
+	memset(&servaddr, 0, sizeof(servaddr));
 
 	// assign IP, PORT
-	servaddr.sin_family = AF_INET;
+	servaddr.sin_family = PF_INET;
 	servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	servaddr.sin_port = htons(PORT);
 

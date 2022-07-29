@@ -18,14 +18,14 @@ void func(int connfd)
 	int n;
 	// infinite loop for chat
 	for (;;) {
-		bzero(buff, MAX);
+		memset(buff, 0, MAX);
 
 		// read the message from client and copy it in buffer
 		read(connfd, buff, sizeof(buff));
 
 		// length of the input string:
-		bzero(response, MAX);
-		snprintf(response, sizeof response, "length of input:%d", strlen(buff));
+		memset(response, 0, MAX);
+		snprintf(response, sizeof response, "length of input:%lu", strlen(buff));
 
 		// and send the result to client
 		write(connfd, response, sizeof(response));
@@ -38,21 +38,22 @@ void func(int connfd)
 
 int main()
 {
-	int sockfd, connfd, len;
+	int sockfd, connfd; 
+	unsigned int len;
 	struct sockaddr_in servaddr, cli;
 
 	// socket create and verification
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	sockfd = socket(PF_INET, SOCK_STREAM, 0);
 	if (sockfd == -1) {
 		printf("socket creation failed...\n");
 		exit(0);
 	}
 	else
 		printf("Socket successfully created..\n");
-	bzero(&servaddr, sizeof(servaddr));
+	memset(&servaddr, 0, sizeof(servaddr));
 
 	// assign IP, PORT
-	servaddr.sin_family = AF_INET;
+	servaddr.sin_family = PF_INET;
 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	servaddr.sin_port = htons(PORT);
 

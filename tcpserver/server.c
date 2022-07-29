@@ -54,8 +54,9 @@ int main()
 
 	// assign IP, PORT
 	servaddr.sin_family = PF_INET;
-	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-	servaddr.sin_port = htons(PORT);
+	// 主机字节顺序到网络字节顺序的转换
+	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);// 0.0.0.0 地址对应的数字
+	servaddr.sin_port = htons(PORT); //host to network short
 
 	// Binding newly created socket to given IP and verification
 	if ((bind(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr))) != 0) {

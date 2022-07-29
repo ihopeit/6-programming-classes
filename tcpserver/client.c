@@ -17,7 +17,7 @@ void func(int sockfd)
 	int n;
 	for (;;) {
 		memset(buff, 0, sizeof(buff));
-		printf("Enter the string : ");
+		printf("Enter the message : ");
 		n = 0;
 		while ((buff[n++] = getchar()) != '\n')
 			;
@@ -34,8 +34,8 @@ void func(int sockfd)
 
 int main()
 {
-	int sockfd, connfd;
-	struct sockaddr_in servaddr, cli;
+	int sockfd;
+	struct sockaddr_in servaddr;
 
 	// socket create and verification
 	sockfd = socket(PF_INET, SOCK_STREAM, 0);
@@ -60,7 +60,7 @@ int main()
 	else
 		printf("connected to the server..\n");
 
-	// function for chat
+	// function for communication
 	func(sockfd);
 
 	// close the socket

@@ -8,15 +8,13 @@
 #include <sys/types.h>
 #include <errno.h>
 
-#include "../structure/hashtable.h"
-
 #define MAX 256
 #define PORT 8080
 
 extern int errno ;
 
 // function to read from client, and send response
-void func(int connfd, ht* cache)
+void func(int connfd)
 {
 	errno = 0; //to set errno to 0 at initializing
 	char buff[MAX];
@@ -51,8 +49,6 @@ void func(int connfd, ht* cache)
 
 int main()
 {
-	ht* cache = ht_create();
-
 	int sockfd, connfd; 
 	unsigned int len;
 	struct sockaddr_in servaddr, cli;
@@ -105,12 +101,9 @@ int main()
 			printf("server accept the client...\n");
 
 		// Function for communication between client and server
-		func(connfd, cache);
+		func(connfd);
 	}
 
 	// After communication close the socket
 	close(sockfd);
-
-	ht_destroy(cache);
 }
-

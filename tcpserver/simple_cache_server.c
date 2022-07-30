@@ -73,7 +73,10 @@ void func(int connfd, ht* cache){
 
 		char **tokens;
         int count;
-		buff[strlen(buff)-1] = 0; //remove the trailing newline
+		if( buff[strlen(buff)-1] == '\n')
+			buff[strlen(buff)-1] = 0; //remove the trailing newline
+		//fprintf(stderr, "message:%s\r\n", buff);
+	
 		if(strlen(buff) == 0 ){
 			//fprintf(stderr, "no message from client:%s\n", buff);
 			write(connfd, "\n", 1);
@@ -89,8 +92,15 @@ void func(int connfd, ht* cache){
         count = split (buff, ' ', &tokens);// 分解 token
         
 		if(count < 2) { // 消息不正确时，也回复客户端（避免客户端持续等待）
-			write(connfd, WRONG_ARGUMENTS, strlen(WRONG_ARGUMENTS));
+			int exit = strcmp(tokens[0], "exit");
 			free_tokens(tokens, count);
+
+			if(exit==0){ // client exit command
+				fprintf(stderr, "Close the client connection: \n");
+				close(connfd);
+				break; // break the current connection
+			}
+			write(connfd, WRONG_ARGUMENTS, strlen(WRONG_ARGUMENTS));
 			continue;
 		}
 
@@ -103,9 +113,9 @@ void func(int connfd, ht* cache){
 			write(connfd, "OK", strlen("OK"));
 		} else if (strcmp(tokens[0], "get") == 0 && count == 2){
 			char *value = (char *)ht_get(cache, tokens[1]);
-			if (value) {  // fprintf(stderr, "key:%s, value:%s", tokens[1], value);
+			if (value) { //fprintf(stderr, "Get key:%s, value:%s\n", tokens[], value);
 				write(connfd, value, strlen(value));
-			} else {  // fprintf(stderr, "Error getting key:%s, value:%s", tokens[1], value);
+			} else {  //fprintf(stderr, "Error getting key:%s, value:%s\n", tokens[1], value);
 				write(connfd, "\n", 1);
 			}
 		} else{

@@ -10,14 +10,14 @@
 #define PORT 8080
 #define SA struct sockaddr
 
-void func(int sockfd)
+void func(int sockfd, char *server_addr)
 {
 	char buff[MAX];
 	char response[MAX];
 	int n;
 	for (;;) {
 		memset(buff, 0, sizeof(buff));
-		printf("Enter the message : ");
+		printf("%s>",server_addr);
 		n = 0;
 		while ((buff[n++] = getchar()) != '\n')
 			;
@@ -28,12 +28,18 @@ void func(int sockfd)
 		write(sockfd, buff, sizeof(buff));
 		memset(response, 0, sizeof(response));
 		read(sockfd, response, sizeof(response));
-		printf("From Server : %s\n", response);
+		printf("%s\n", response);
 	}
 }
 
-int main()
+int main(int argc, char** argv)
 {
+	char* server_addr = "127.0.0.1";
+
+	if (argc > 1){
+		server_addr = argv[1];
+	}
+
 	int sockfd;
 	struct sockaddr_in servaddr;
 
@@ -49,7 +55,7 @@ int main()
 
 	// assign IP, PORT
 	servaddr.sin_family = PF_INET;
-	servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	servaddr.sin_addr.s_addr = inet_addr(server_addr);
 	servaddr.sin_port = htons(PORT);
 
 	// connect the client socket to server socket
@@ -61,7 +67,7 @@ int main()
 		printf("connected to the server..\n");
 
 	// function for communication
-	func(sockfd);
+	func(sockfd, server_addr);
 
 	// close the socket
 	close(sockfd);

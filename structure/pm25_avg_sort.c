@@ -73,7 +73,7 @@ int main(int argc, char** argv){
             char *month = tokens[1];
             char *pm25 = tokens[5];
 
-            if(city==NULL) city = current_city;
+            if(city==NULL) city = strdup(current_city);
             
             // 同一个城市，且月份在最小月份（1月）到最大月份（5月）之间:
             if(strcmp(current_city, city)==0 && 
@@ -94,16 +94,16 @@ int main(int argc, char** argv){
                 }
             }else {
                 //重新开始统计新城市的数据
-                city = current_city;
+                city = strdup(current_city);
                 data_count = 0;
                 total_pm25 = 0L;
             }
             //printf ("City:%s month:%s pm2.5:%s\n", city, month, pm25);
         }
 
-        /* FIXME: freeing tokens */
-        //for (i = 0; i < count; i++) free (tokens[i]);
-        //free (tokens);
+        /* freeing tokens */
+        for (i = 0; i < count; i++) free (tokens[i]);
+        free (tokens);
     }
     
     qsort(cities_pm25, index, sizeof(CityPM25), compare_pm25);

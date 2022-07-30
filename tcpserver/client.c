@@ -40,11 +40,11 @@ int main()
 	// socket create and verification
 	sockfd = socket(PF_INET, SOCK_STREAM, 0);
 	if (sockfd == -1) {
-		printf("socket creation failed...\n");
-		exit(0);
+            printf("socket creation failed...\n");
+	    exit(0);
 	}
 	else
-		printf("Socket successfully created..\n");
+	    printf("Socket successfully created..\n");
 	memset(&servaddr, 0, sizeof(servaddr));
 
 	// assign IP, PORT

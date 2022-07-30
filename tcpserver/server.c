@@ -13,25 +13,20 @@
 
 extern int errno ;
 
-// function to read from client, and send response
-void func(int connfd)
-{
+void func(int connfd){ // 处理与客户端的通信，读取数据，相应内容
 	errno = 0; //to set errno to 0 at initializing
-	char buff[MAX];
-	char response[MAX];
+	char buff[MAX], response[MAX];
 	int n;
 	// infinite loop for reading message from client
 	for (;;) {
 		memset(buff, 0, MAX);
+		memset(response, 0, MAX);
 
-		// read the message from client and copy it in buffer
+		// 从客户端 socket 读取内容，保存到 buff 缓冲区
 		read(connfd, buff, sizeof(buff));
 
-		// length of the input string:
-		memset(response, 0, MAX);
-		snprintf(response, sizeof response, "length of input:%lu", strlen(buff));
-
-		// and send the result to client
+		// 计算读取到的文本长度，并且回复客户端计算出来的文本长度
+		snprintf(response, sizeof response, "input len:%lu", strlen(buff));
 		write(connfd, response, sizeof(response));
 
 		int errnum = errno;
@@ -47,33 +42,25 @@ void func(int connfd)
 }
 
 
-int main()
-{
-	int sockfd, connfd; 
-	unsigned int len;
+int main(){
+	int sockfd, connfd; unsigned int len;
 	struct sockaddr_in servaddr, cli;
+    signal(SIGPIPE, SIG_IGN); // 忽略 SIGPIPE 信号避免 crash
 
-    // Set the SIGPIPE handler to SIG_IGN. 
-	// This will prevent socket write from causing a SIGPIPE signal.
-    signal(SIGPIPE, SIG_IGN);
-
-	// socket create and verification
-	sockfd = socket(PF_INET, SOCK_STREAM, 0);
+	sockfd = socket(PF_INET, SOCK_STREAM, 0); // create socket
 	if (sockfd == -1) {
 		printf("socket creation failed...\n");
 		exit(0);
-	}
-	else
-		printf("Socket successfully created..\n");
-	memset(&servaddr, 0, sizeof(servaddr));
+	} else 
+		printf("Socket successfully created..\n"); 
 
-	// assign IP, PORT
-	servaddr.sin_family = PF_INET;
-	// 主机字节顺序到网络字节顺序的转换
-	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);// 0.0.0.0 地址对应的数字
+	memset(&servaddr, 0, sizeof(servaddr));
+	servaddr.sin_family = PF_INET; // protocol family: internet
+	// 主机字节顺序到网络字节顺序的转换, INADDR_ANY 是 0.0.0.0 地址对应的数字
+	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	servaddr.sin_port = htons(PORT); //host to network short
 
-	// Binding newly created socket to given IP and verification
+	// 绑定 socket 到 IP 地址， 0.0.0.0 表示本机所有的地址
 	if ((bind(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr))) != 0) {
 		printf("socket bind failed...\n");
 		exit(0);
@@ -85,25 +72,20 @@ int main()
 	if ((listen(sockfd, 5)) != 0) {
 		printf("Listen failed...\n");
 		exit(0);
-	}
-	else
+	} else
 		printf("Server listening..\n");
 	len = sizeof(cli);
 
-    for(;;){ // 持续监听来自客户端的连接请求
-		// Accept the data packet from client and verification
+    for(;;){ // 持续监听来自客户端的连接请求，接收客户端请求：
 		connfd = accept(sockfd, (struct sockaddr*)&cli, &len);
 		if (connfd < 0) {
 			printf("server accept failed...\n");
 			exit(0);
-		}
-		else
+		} else
 			printf("server accept the client...\n");
 
-		// Function for communication between client and server
-		func(connfd);
+		func(connfd); // 通过连接socket connfd 处理客户端服务端的通信
 	}
 
-	// After communication close the socket
-	close(sockfd);
+	close(sockfd); 	// After communication close the socket
 }

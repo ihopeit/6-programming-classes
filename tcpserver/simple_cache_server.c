@@ -60,11 +60,9 @@ void free_tokens(char **tokens, int count){
 }
 
 // function to read from client, and send response
-void func(int connfd, ht* cache)
-{
+void func(int connfd, ht* cache){
 	errno = 0; //to set errno to 0 at initializing
-	char buff[MAX];
-	char response[MAX];
+	char buff[MAX], response[MAX];
 	int n;
 	// infinite loop for reading message from client
 	for (;;) {
@@ -88,7 +86,7 @@ void func(int connfd, ht* cache)
 			}
 			continue;
 		}
-        count = split (buff, ' ', &tokens);
+        count = split (buff, ' ', &tokens);// 分解 token
         
 		if(count < 2) { // 消息不正确时，也回复客户端（避免客户端持续等待）
 			write(connfd, WRONG_ARGUMENTS, strlen(WRONG_ARGUMENTS));
@@ -96,31 +94,24 @@ void func(int connfd, ht* cache)
 			continue;
 		}
 
-		if (strcmp(tokens[0], "set") == 0 && count >= 3)
-		{
+		if (strcmp(tokens[0], "set") == 0 && count >= 3){
 			int command_and_key_len = strlen(tokens[0]) + strlen(tokens[1]) + 2;
 			char *value = substr(buff, command_and_key_len, strlen(buff));
 			ht_set(cache, tokens[1], value);
 
 			// and send respone to client
 			write(connfd, "OK", strlen("OK"));
-		}
-		else if (strcmp(tokens[0], "get") == 0 && count == 2)
-		{
+		} else if (strcmp(tokens[0], "get") == 0 && count == 2){
 			char *value = (char *)ht_get(cache, tokens[1]);
-			if (value)
-			{  // fprintf(stderr, "key:%s, value:%s", tokens[1], value);
+			if (value) {  // fprintf(stderr, "key:%s, value:%s", tokens[1], value);
 				write(connfd, value, strlen(value));
-			}
-			else
-			{  // fprintf(stderr, "Error getting key:%s, value:%s", tokens[1], value);
+			} else {  // fprintf(stderr, "Error getting key:%s, value:%s", tokens[1], value);
 				write(connfd, "\n", 1);
 			}
-		}
-		else
-		{
+		} else{
 			write(connfd, COMMAND_NOT_SUPPORTED, strlen(COMMAND_NOT_SUPPORTED));
 		}
+
 		free_tokens(tokens, count);
 
 		int errnum = errno;

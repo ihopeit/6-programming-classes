@@ -8,12 +8,9 @@
 
 #define MAX 256
 #define PORT 8080
-#define SA struct sockaddr
 
-void func(int sockfd, char *server_addr)
-{
-	char buff[MAX];
-	char response[MAX];
+void func(int sockfd, char *server_addr){
+	char buff[MAX], response[MAX];
 	int n;
 	for (;;) {
 		memset(buff, 0, sizeof(buff));
@@ -32,44 +29,27 @@ void func(int sockfd, char *server_addr)
 	}
 }
 
-int main(int argc, char** argv)
-{
-	char* server_addr = "127.0.0.1";
-
-	if (argc > 1){
-		server_addr = argv[1];
-	}
-
-	int sockfd;
+int main(int argc, char** argv){
+	char* server_addr = argc > 1 ? argv[1] : "127.0.0.1";
 	struct sockaddr_in servaddr;
 
-	// socket create and verification
-	sockfd = socket(PF_INET, SOCK_STREAM, 0);
+	int sockfd = socket(PF_INET, SOCK_STREAM, 0); // create socket
 	if (sockfd == -1) {
-            printf("socket creation failed...\n");
+        printf("socket creation failed...\n");
 	    exit(0);
-	}
-	else
-	    printf("Socket successfully created..\n");
-	memset(&servaddr, 0, sizeof(servaddr));
+	} else { printf("Socket successfully created..\n"); }
 
-	// assign IP, PORT
+	memset(&servaddr, 0, sizeof(servaddr));
 	servaddr.sin_family = PF_INET;
 	servaddr.sin_addr.s_addr = inet_addr(server_addr);
 	servaddr.sin_port = htons(PORT);
 
-	// connect the client socket to server socket
 	if (connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) != 0) {
 		printf("connection with the server failed...\n");
 		exit(0);
-	}
-	else
-		printf("connected to the server..\n");
+	} else { printf("connected to the server..\n"); }
 
-	// function for communication
-	func(sockfd, server_addr);
-
-	// close the socket
-	close(sockfd);
+	func(sockfd, server_addr); // 处理客户端服务端连接
+	close(sockfd); // close the socket
 }
 

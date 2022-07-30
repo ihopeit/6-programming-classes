@@ -6,17 +6,23 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <errno.h>
+
+#include "../structure/hashtable.h"
 
 #define MAX 256
 #define PORT 8080
 
+extern int errno ;
+
 // function to read from client, and send response
-void func(int connfd)
+void func(int connfd, ht* cache)
 {
+	errno = 0; //to set errno to 0 at initializing
 	char buff[MAX];
 	char response[MAX];
 	int n;
-	// infinite loop for chat
+	// infinite loop for reading message from client
 	for (;;) {
 		memset(buff, 0, MAX);
 
@@ -30,17 +36,30 @@ void func(int connfd)
 		// and send the result to client
 		write(connfd, response, sizeof(response));
 
+		int errnum = errno;
+		if(errnum == EPIPE) {
+			fprintf(stderr, "Pipe Error, errno: %d\n", errno);
+			errno = 0; //reset errno to 0;
+			break;
+		}
+
 		// print buffer which contains the client contents
-		printf("From client: %s  To client: %s\n", buff, response);
+		printf("From client: %s  To client: %d %s\n", buff, connfd, response);
 	}
 }
 
 
 int main()
 {
+	ht* cache = ht_create();
+
 	int sockfd, connfd; 
 	unsigned int len;
 	struct sockaddr_in servaddr, cli;
+
+    // Set the SIGPIPE handler to SIG_IGN. 
+	// This will prevent socket write from causing a SIGPIPE signal.
+    signal(SIGPIPE, SIG_IGN);
 
 	// socket create and verification
 	sockfd = socket(PF_INET, SOCK_STREAM, 0);
@@ -75,19 +94,23 @@ int main()
 		printf("Server listening..\n");
 	len = sizeof(cli);
 
-	// Accept the data packet from client and verification
-	connfd = accept(sockfd, (struct sockaddr*)&cli, &len);
-	if (connfd < 0) {
-		printf("server accept failed...\n");
-		exit(0);
-	}
-	else
-		printf("server accept the client...\n");
+    for(;;){ // 持续监听来自客户端的连接请求
+		// Accept the data packet from client and verification
+		connfd = accept(sockfd, (struct sockaddr*)&cli, &len);
+		if (connfd < 0) {
+			printf("server accept failed...\n");
+			exit(0);
+		}
+		else
+			printf("server accept the client...\n");
 
-	// Function for communication between client and server
-	func(connfd);
+		// Function for communication between client and server
+		func(connfd, cache);
+	}
 
 	// After communication close the socket
 	close(sockfd);
+
+	ht_destroy(cache);
 }
 

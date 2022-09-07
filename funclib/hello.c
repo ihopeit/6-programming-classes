@@ -1,3 +1,5 @@
 /* Source file: hello.c  */
 #include<stdio.h>
-void hello(){ printf("Hello\n"); }
+void hello(){
+     printf("Hello world\n"); 
+}

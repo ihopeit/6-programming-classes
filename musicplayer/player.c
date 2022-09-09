@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h> // for exit()
-#include <unistd.h>
+#include <unistd.h> // comment this line for Windows
 #include <string.h> //strlen
 #include "bass.h"
 
@@ -17,7 +17,7 @@ int main(int argc, char** argv){
         printf("Usage: ./play xxx.mp3 \n");
         exit(-1);
     }
-    HSTREAM stream = NULL;
+    HSTREAM stream = 0;
     if(startsWith("http", argv[1])){
         stream = BASS_StreamCreateURL(argv[1], 0, 0, NULL, 0);
     } else {
@@ -38,6 +38,7 @@ int main(int argc, char** argv){
     while (TRUE) {
         usleep(100);
         if(!BASS_ChannelIsActive(stream)){
+            BASS_StreamFree(stream);
             break;
         }
     }

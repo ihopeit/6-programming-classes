@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <unistd.h> // comment this line for Windows
+#include <unistd.h> // for usleep(), comment this line for Windows
 #include <string.h> //strlen
 #include "bass.h"
 

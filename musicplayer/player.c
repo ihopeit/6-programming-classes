@@ -1,21 +1,19 @@
 #include <stdio.h>
-#include <stdlib.h> // for exit()
 #include <unistd.h> // comment this line for Windows
 #include <string.h> //strlen
 #include "bass.h"
 
-BOOL startsWith(const char *pre, const char *str)
-{
+BOOL startsWith(const char *pre, const char *str){
     size_t lenpre = strlen(pre),
            lenstr = strlen(str);
     return lenstr < lenpre ? FALSE : memcmp(pre, str, lenpre) == 0;
 }
 
 int main(int argc, char** argv){
-    BASS_Init(-1, 44100, 0, 0, NULL);
+    BASS_Init(-1, 44100, 0, 0, NULL); 
     if(argc==1){
         printf("Usage: ./play xxx.mp3 \n");
-        exit(-1);
+        return -1;
     }
     HSTREAM stream = 0;
     if(startsWith("http", argv[1])){
@@ -26,8 +24,8 @@ int main(int argc, char** argv){
 
     if(!stream){
         printf("Usage: ./play xxx.mp3 \n");
-        printf("Failed to open file, code: %d\n",BASS_ErrorGetCode());
-        exit(-2);
+        printf("Failed to open file, %s code: %d\n", argv[1], BASS_ErrorGetCode());
+        return -2;
     }
 
     BOOL result = BASS_ChannelPlay(stream, TRUE);

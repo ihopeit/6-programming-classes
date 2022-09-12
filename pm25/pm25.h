@@ -8,6 +8,14 @@ typedef struct{
     int pm25;
 } CityPM25;
 
+
+typedef struct{ 
+    char* city;
+    char* month;
+    int pm25;
+} CityMonthPM25;
+
+
 int split (const char *txt, char delim, char ***tokens){
     int *tklen, *t, count = 1;
     char **arr, *p = (char *) txt;
@@ -32,6 +40,15 @@ int split (const char *txt, char delim, char ***tokens){
 int compare_pm25(const void* arg1, const void* arg2){ 
     const CityPM25 *a = (const CityPM25*) arg1;
     const CityPM25 *b = (const CityPM25*) arg2;
+
+    if (a->pm25 < b->pm25) return -1;
+    if (a->pm25 > b->pm25) return 1;
+    return 0;
+}
+
+int compare_month_pm25(const void* arg1, const void* arg2){ 
+    const CityMonthPM25 *a = (const CityMonthPM25*) arg1;
+    const CityMonthPM25 *b = (const CityMonthPM25*) arg2;
 
     if (a->pm25 < b->pm25) return -1;
     if (a->pm25 > b->pm25) return 1;

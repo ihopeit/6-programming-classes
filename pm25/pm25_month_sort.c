@@ -10,10 +10,10 @@
 const char *MONTH = "2022-08";
 
 int main(int argc, char** argv){
-    char *filename = "../pm25/PM25_By_Cities_Month.csv";
+    char *filename = "PM25_By_Cities_Month.csv";
     FILE* fp = fopen(filename, "r");
     if(!fp){
-        fprintf(stderr, "Cannot open file.\n");
+        fprintf(stderr, "Cannot open file: %s.\n", filename);
         exit(1);
     }
 

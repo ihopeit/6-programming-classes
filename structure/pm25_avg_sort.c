@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-const char *MIN_MONTH = "2022-01-01";
-const char *MAX_MONTH = "2022-05-01";
+const char *MIN_MONTH = "2022-01";
+const char *MAX_MONTH = "2022-05";
 
 //使用结构体来存储一个城市的 PM25 值
 typedef struct{ 
@@ -46,7 +46,7 @@ int compare_pm25(const void* arg1, const void* arg2){
 
 
 int main(int argc, char** argv){
-    char *filename = "../pm25/PM25_By_Cities.csv";
+    char *filename = "../pm25/PM25_By_Cities_Month.csv";
     FILE* fp = fopen(filename, "r");
     if(!fp){
         fprintf(stderr, "Cannot open file.\n");

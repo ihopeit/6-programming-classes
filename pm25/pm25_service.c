@@ -7,6 +7,7 @@
 #include <apr_strings.h>
 
 #include "pm25.h"
+#include "../common.h"
 
 /* apr_array's initial size.
  * because apr_array is a dynamic array, the initial size is not a max size of the array. */
@@ -62,6 +63,14 @@ int main(int argc, char** argv){
             char *month = tokens[1];
             char *pm25 = tokens[5];
             
+            char year[5];
+            memcpy( year, month, 4 );
+            year[4] = '\0';
+            if(!is_digit(year)){
+                printf("Data with invalid month will be skipped, month: %s current_city:%s\n", month, current_city);
+                continue;
+            }
+
             CityMonthPM25 *current_city_pm25 = (CityMonthPM25 *) malloc(sizeof(CityMonthPM25 *));
             int *current_value = (int *) malloc(sizeof(int));
             *current_value = atoi(pm25);

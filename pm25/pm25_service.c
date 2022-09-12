@@ -33,32 +33,18 @@ static size_t iterate_array_for_month(const apr_array_header_t *arr,
     return index;
 }
 
-int main(int argc, char** argv){
-    char *filename = "../pm25/PM25_By_Cities.csv";
-    FILE* fp = fopen(filename, "r");
+// read pm2.5 data for each city of each month from file
+void init_city_data(char* csv_data_file_name, apr_array_header_t *arr){
+    
+    FILE* fp = fopen(csv_data_file_name, "r");
     if(!fp){
         fprintf(stderr, "Cannot open file.\n");
         exit(1);
     }
 
-    const char *target_month = MONTH;
-
     char *line = NULL;
     size_t linecap = 0; // line capacity
     ssize_t read;
-
-    apr_pool_t *mp;
-    apr_array_header_t *arr;
-        
-    apr_initialize();
-    apr_pool_create(&mp, NULL);
-
-    /* Create a dynamic array of CityMonthPM25 */
-    arr = apr_array_make(mp, ARRAY_INIT_SZ, sizeof(const CityMonthPM25 *));
-
-    if (argc > 1){
-        target_month = argv[1];
-    }
 
     while ((read = getline(&line, &linecap, fp)) > 0){
         char **tokens;
@@ -91,9 +77,32 @@ int main(int argc, char** argv){
         }
     }
     
+    fclose(fp);
+    if (line)
+        free(line);
+}
+
+int main(int argc, char** argv){
+    char *filename = "../pm25/PM25_By_Cities.csv";
+
+    const char *target_month = MONTH;
+    apr_pool_t *mp;
+    apr_array_header_t *arr;
+        
+    apr_initialize();
+    apr_pool_create(&mp, NULL);
+
+    /* Create a dynamic array of CityMonthPM25 */
+    arr = apr_array_make(mp, ARRAY_INIT_SZ, sizeof(const CityMonthPM25 *));
+
+    if (argc > 1){
+        target_month = argv[1];
+    }
+
+    init_city_data(filename, arr);
+
     CityMonthPM25 *cities_pm25 = calloc(12, sizeof(const CityMonthPM25 *));
     size_t element_count = iterate_array_for_month(arr, target_month, cities_pm25);
-
 
     qsort(cities_pm25, element_count, sizeof(CityMonthPM25), compare_month_pm25);
 
@@ -102,9 +111,6 @@ int main(int argc, char** argv){
         printf("city: %s pm2.5: %d \n", cities_pm25 -> city, cities_pm25 -> pm25);
         cities_pm25++;
     }
-    
-    fclose(fp);
-    if (line)
-        free(line);
+
     return 0;
 }

@@ -112,11 +112,11 @@ int main(int argc, char** argv){
         "\r\n"
 
         "<title>PM2.5 for cities sorted!</title>\n"
-        "<h1>PM2.5 list for month:%s \n</h1>"
+        "<h1>PM2.5 list for month:%s <br>\n</h1>"
 
-        "Service running on host \n\n",
+        "Service running on host <i>%s</i> <br>\n\n",
 
-        target_month);
+        target_month, getenv("SERVER_NAME"));
     }
 
     CityMonthPM25 *cities_pm25 = calloc(12, sizeof(const CityMonthPM25 *));
@@ -124,9 +124,9 @@ int main(int argc, char** argv){
 
     qsort(cities_pm25, element_count, sizeof(CityMonthPM25), compare_month_pm25);
 
-    printf("==== city sorted by pm2.5 at month: %s====\n", target_month);
+    printf("==== city sorted by pm2.5 at month: %s==== <br>\n", target_month);
     while(cities_pm25 && cities_pm25 ->city ){
-        printf("city: %s pm2.5: %d \n", cities_pm25 -> city, cities_pm25 -> pm25);
+        printf("city: %s pm2.5: %d <br>\n", cities_pm25 -> city, cities_pm25 -> pm25);
         cities_pm25++;
     }
 

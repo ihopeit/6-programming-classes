@@ -5,6 +5,8 @@
 $ gcc -o word_counter.out hash_demo.c hashtable.c
 $ echo 'foo bar the bar bar bar the' | ./word_counter.out
 
+on the console, press Ctrl + D, and Enter to end the program by EOF.
+
 See also:
 https://stackoverflow.com/questions/5134891/how-do-i-use-valgrind-to-find-memory-leaks
 */
@@ -46,7 +48,8 @@ void accumulate_word_count(ht* counts, char* word){
         exit_nomem();
 }
 
-int main(void) {
+// show how to set value for a key in hash table, and get the value
+int main2(void) {
     ht* counts = ht_create();
     if (counts == NULL)
         exit(-1);
@@ -66,7 +69,9 @@ int main(void) {
     return 0;
 }
 
-int main2(void) {
+
+// a word counter
+int main(void) {
     ht* counts = ht_create();
     if (counts == NULL) {
         exit_nomem();

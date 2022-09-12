@@ -18,6 +18,7 @@ int main(int argc, char** argv){
     HSTREAM stream = 0;
 
     for(int i=1; i<=argc; i++){
+        printf("Start playing: %s \n", argv[i]);
         if(startsWith("http", argv[i])){
             stream = BASS_StreamCreateURL(argv[i], 0, 0, NULL, 0);
         } else {

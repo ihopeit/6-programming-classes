@@ -7,11 +7,11 @@ LDFLAGS = -lapr-1
 
 apr_array_demo:
 	gcc $(CFLAGS) -o apr_array_demo.out apr_array_demo.c $(LDFLAGS) $(INCLUDE) $(LIBDIR)
-	
-pm25_sort_cmd:
+
+pm25_sort_cmd: pm25_month_sort.c pm25.h
 	gcc $(CFLAGS) -o pm25_month_sort.out pm25_month_sort.c
 
-pm25_service:
+pm25_service: pm25_service.c pm25.h ../common.h
 	gcc $(CFLAGS) -o pm25_service.out pm25_service.c $(LDFLAGS) $(INCLUDE) $(LIBDIR)
 
 

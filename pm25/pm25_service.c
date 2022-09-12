@@ -12,8 +12,7 @@
  * because apr_array is a dynamic array, the initial size is not a max size of the array. */
 #define ARRAY_INIT_SZ           32
 
-const char *MONTH = "2022-08-01";
-
+const char *MONTH = "2022-08"; 
 
 static size_t iterate_array_for_month(const apr_array_header_t *arr, 
     const char* month, CityMonthPM25 *cities_pm25)
@@ -32,9 +31,17 @@ static size_t iterate_array_for_month(const apr_array_header_t *arr,
     return index;
 }
 
+/* 月份字符串是否为有效的格式，如 2021-05 表示 2021年5月 */
+int is_valid_month(const char *month){
+    char year[5];
+    memcpy(year, month, 4);
+    year[4] = '\0';
+
+    return is_digit(year);
+}
+
 // read pm2.5 data for each city of each month from file
 void init_city_data(char* csv_data_file_name, apr_array_header_t *arr){
-    
     FILE* fp = fopen(csv_data_file_name, "r");
     if(!fp){
         fprintf(stderr, "Cannot open file.\n");
@@ -44,24 +51,14 @@ void init_city_data(char* csv_data_file_name, apr_array_header_t *arr){
     char *line = NULL;
     size_t linecap = 0; // line capacity
     ssize_t read;
-
     while ((read = getline(&line, &linecap, fp)) > 0){
         char **tokens;
-        int count;
-        count = split (line, ',', &tokens);
-        
-        if(count >= 7) {
+        int count = split (line, ',', &tokens);
+
+        if(count >= 7 && is_valid_month(tokens[1])) { // 忽略第一行表头的无效月份
             char *current_city = tokens[0];
             char *month = tokens[1];
             char *pm25 = tokens[5];
-            
-            char year[5];
-            memcpy( year, month, 4 );
-            year[4] = '\0';
-            if(!is_digit(year)){
-                printf("Data with invalid month will be skipped, month: %s current_city:%s\n", month, current_city);
-                continue;
-            }
 
             CityMonthPM25 *current_city_pm25 = (CityMonthPM25 *) malloc(sizeof(CityMonthPM25 *));
             int *current_value = (int *) malloc(sizeof(int));
@@ -70,7 +67,6 @@ void init_city_data(char* csv_data_file_name, apr_array_header_t *arr){
             current_city_pm25 -> city = current_city;
             current_city_pm25 -> month = month;
             current_city_pm25 -> pm25 = *current_value;
-
             // push an element to the dynamic array:
             *(const CityMonthPM25 **)apr_array_push(arr) = current_city_pm25;
         }
@@ -82,7 +78,7 @@ void init_city_data(char* csv_data_file_name, apr_array_header_t *arr){
 }
 
 int main(int argc, char** argv){
-    char *filename = "../pm25/PM25_By_Cities.csv";
+    char *filename = "../pm25/PM25_By_Cities_Month.csv";
 
     const char *target_month = MONTH;
     apr_pool_t *mp;

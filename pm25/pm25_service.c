@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <apr_general.h>
 #include <apr_tables.h>
 #include <apr_strings.h>
 

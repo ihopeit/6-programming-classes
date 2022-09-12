@@ -1,5 +1,5 @@
-# make -f Makefile.simple 
-# make -f Makefile.simple clean
+# make -f compact.makefile
+# make -f compact.makefile clean
 CC = gcc          ## C Compiler command
 CFLAGS   = -Wall  ## C Flags, -ggdb: generate gdb debug info, -Wall: enable all warning
 LDFLAGS  =        ## Library loading flags, like -lbass, -lopencv

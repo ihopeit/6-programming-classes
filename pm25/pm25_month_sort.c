@@ -9,12 +9,6 @@
 
 const char *MONTH = "2022-08-01";
 
-typedef struct{ 
-    char* city;
-    char* month;
-    int pm25;
-} CityMonthPM25;
-
 int main(int argc, char** argv){
     char *filename = "../pm25/PM25_By_Cities.csv";
     FILE* fp = fopen(filename, "r");

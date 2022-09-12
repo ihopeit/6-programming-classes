@@ -111,10 +111,11 @@ int main(int argc, char** argv){
         printf("Content-type: text/html\r\n"
         "\r\n"
 
+        "<head><meta charset=\"UTF-8\"></head>\n"
         "<title>PM2.5 for cities sorted!</title>\n"
         "<h1>PM2.5 list for month:%s <br>\n</h1>"
 
-        "Service running on host <i>%s</i> <br>\n\n",
+        "<p>Service running on host <i>%s</i> </p>\n\n",
 
         target_month, getenv("SERVER_NAME"));
     }

@@ -29,6 +29,7 @@ char* substr(const char *src, int m, int n)
  
     // start with m'th char and copy `len` chars into the destination
     strncpy(dest, (src + m), len);
+    dest[len] = '\0';
 
     return dest;
 }

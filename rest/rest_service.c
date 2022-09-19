@@ -6,8 +6,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <ulfius.h>
+#include <curl/curl.h>
 
 #include "rest_service.h"
+#include "../common.h"
 
 #define PORT 8000
 
@@ -27,6 +29,7 @@ int callback_default (const struct _u_request * request, struct _u_response * re
 
 int main (int argc, char **argv) {
   int ret;
+  
   
   // Set the framework port number
   struct _u_instance instance;
@@ -76,16 +79,38 @@ int main (int argc, char **argv) {
 
 int callback_city_history (const struct _u_request * request, struct _u_response * response, void * user_data){
   char * new_body;
-  new_body = msprintf("url: %s history data:", request->http_url);
-  ulfius_set_string_body_response(response, 200, new_body);
-  o_free(new_body);
-  y_log_message(Y_LOG_LEVEL_DEBUG, "request url: %s", response->shared_data);
+  char * prefix = "/pm25/history/";
+  CURL *curl = curl_easy_init();
+
+  char * city_name = substr(request->http_url, strlen(prefix), strlen(request->http_url));
+
+  if(curl) {
+    int decodelen;
+    char *decoded = curl_easy_unescape(curl, city_name, 0, &decodelen);
+    if(decoded) {
+      printf("city_name encoded:%s -> %s \n", city_name, decoded);
+      new_body = msprintf("<head><meta charset=\"UTF-8\"></head>\n url: %s history data for city: %s", request->http_url, decoded);
+      
+      ulfius_set_string_body_response(response, 200, new_body);
+      o_free(new_body);
+
+      /* ... */
+      curl_free(decoded);
+    }
+    curl_easy_cleanup(curl);
+  }
+
+  free(city_name);
+  y_log_message(Y_LOG_LEVEL_DEBUG, "request url: %s", request->http_url);
   return U_CALLBACK_CONTINUE;
 }
 
 int callback_month_ranking (const struct _u_request * request, struct _u_response * response, void * user_data){
   char * new_body;
-  new_body = msprintf("url: %s ranking by month:", request->http_url);
+  char * prefix = "/pm25/month/";
+  char * month = substr(request->http_url, strlen(prefix), strlen(request->http_url));
+  new_body = msprintf("<head><meta charset=\"UTF-8\"></head>\n url: %s ranking by month:%s", request->http_url, month);
+
   ulfius_set_string_body_response(response, 200, new_body);
   o_free(new_body);
   y_log_message(Y_LOG_LEVEL_DEBUG, "request url: %s", response->shared_data);

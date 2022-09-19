@@ -122,6 +122,7 @@ int main(int argc, char** argv){
 
     CityMonthPM25 *cities_pm25 = calloc(12, sizeof(const CityMonthPM25 *));
     size_t element_count = iterate_array_for_month(arr, target_month, cities_pm25);
+    CityMonthPM25 *head = cities_pm25;
 
     qsort(cities_pm25, element_count, sizeof(CityMonthPM25), compare_month_pm25);
 
@@ -130,6 +131,7 @@ int main(int argc, char** argv){
         printf("city: %s pm2.5: %d <br>\n", cities_pm25 -> city, cities_pm25 -> pm25);
         cities_pm25++;
     }
+    free(head);
 
     return 0;
 }

@@ -44,7 +44,7 @@ int is_valid_month(const char *month){
 void init_city_data(char* csv_data_file_name, apr_array_header_t *arr){
     FILE* fp = fopen(csv_data_file_name, "r");
     if(!fp){
-        fprintf(stderr, "Cannot open file.\n");
+        fprintf(stderr, "Cannot open file %s.\n", csv_data_file_name);
         exit(1);
     }
 
@@ -60,16 +60,19 @@ void init_city_data(char* csv_data_file_name, apr_array_header_t *arr){
             char *month = tokens[1];
             char *pm25 = tokens[5];
 
-            CityMonthPM25 *current_city_pm25 = (CityMonthPM25 *) malloc(sizeof(CityMonthPM25 *));
-            int *current_value = (int *) malloc(sizeof(int));
-            *current_value = atoi(pm25);
+            CityMonthPM25 *current_city_pm25 = (CityMonthPM25 *) malloc(sizeof(*current_city_pm25));
 
-            current_city_pm25 -> city = current_city;
-            current_city_pm25 -> month = month;
-            current_city_pm25 -> pm25 = *current_value;
+            current_city_pm25 -> city = strdup(current_city);
+            current_city_pm25 -> month = strdup(month);
+            current_city_pm25 -> pm25 = atoi(pm25);
             // push an element to the dynamic array:
             *(const CityMonthPM25 **)apr_array_push(arr) = current_city_pm25;
         }
+
+        /* freeing tokens */
+        for (int i = 0; i < count; i++) 
+            free (tokens[i]);
+        free (tokens);
     }
     
     fclose(fp);

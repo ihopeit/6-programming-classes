@@ -220,19 +220,28 @@ int callback_city_history (const struct _u_request * request, struct _u_response
       printf("==== historical city pm2.5: %s count:%ld==== <br><br>\n", decoded_city, element_count);
       // 分配到 cities_pm25 的空间数量大于实际存储的数据量 (2013年1月到2022年9月，<10年数据, 不到120个月)
       // 处理 elementCount 条数据
+      json_t *array = json_array();
       while(element_count>0 && cities_pm25 && cities_pm25->month && cities_pm25->pm25)
       {
-        char * old_body = new_body;
-        
-        printf("month: %s pm2.5: %d <br>\n", cities_pm25->month, cities_pm25->pm25);
-        asprintf(&new_body,"%s month: %s pm2.5: %d <br>\n", new_body, cities_pm25->month, cities_pm25->pm25);
-        free(old_body);
+        // char * old_body = new_body;
+        // printf("month: %s pm2.5: %d <br>\n", cities_pm25->month, cities_pm25->pm25);
+        // asprintf(&new_body,"%s month: %s pm2.5: %d <br>\n", new_body, cities_pm25->month, cities_pm25->pm25);
+
+        json_t * json_body = json_object();
+        json_object_set_new(json_body, "month", json_string(cities_pm25->month));
+        json_object_set_new(json_body, "pm2.5", json_integer(cities_pm25->pm25));
+        json_array_append_new(array, json_body);
+
+        // free(old_body);
 
         cities_pm25++;
         element_count--;
       }
 
-      ulfius_set_string_body_response(response, 200, new_body);
+      // ulfius_set_string_body_response(response, 200, new_body);
+      ulfius_set_json_body_response(response, 200, array);
+      json_decref(array);
+
       free(new_body);
       new_body = NULL;
 
@@ -267,19 +276,28 @@ int callback_month_ranking (const struct _u_request * request, struct _u_respons
   qsort(cities_pm25, element_count, sizeof(CityMonthPM25), compare_month_pm25);
 
   printf("==== city sorted by pm2.5 at month: %s==== <br>\n", target_month);
+  json_t *array = json_array();
   while (cities_pm25 && cities_pm25->city)
   {
-    char * old_body = new_body;
-    new_body = msprintf("%s \n city: %s pm2.5: %d <br>\n <br>", old_body, cities_pm25->city, cities_pm25->pm25);
+    // char * old_body = new_body;
+    // new_body = msprintf("%s \n city: %s pm2.5: %d <br>\n <br>", old_body, cities_pm25->city, cities_pm25->pm25);
+    json_t * json_body = json_object();
+    json_object_set_new(json_body, "city", json_string(cities_pm25->city));
+    json_object_set_new(json_body, "pm2.5", json_integer(cities_pm25->pm25));
+    json_array_append_new(array, json_body);
+
     printf("city: %s pm2.5: %d <br>\n", cities_pm25->city, cities_pm25->pm25);
     cities_pm25++;
-    o_free(old_body);
+    // o_free(old_body);
   }
 
   free(head);
   free(target_month);
 
-  ulfius_set_string_body_response(response, 200, new_body);
+  //ulfius_set_string_body_response(response, 200, new_body); // response plain html
+  ulfius_set_json_body_response(response, 200, array);
+  json_decref(array);
+
   o_free(new_body);
   y_log_message(Y_LOG_LEVEL_DEBUG, "request url: %s", response->shared_data);
   return U_CALLBACK_CONTINUE;

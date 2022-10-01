@@ -27,11 +27,11 @@ static size_t iterate_array_for_city(const apr_array_header_t *arr,
     int i;
     size_t index = 0;
     for (i = 0; i < arr->nelts; i++) {
-        const CityMonthPM25 *cityPm25 = ((const CityMonthPM25**)arr->elts)[i];
+        CityMonthPM25 cityPm25 = ((CityMonthPM25*)arr->elts)[i];
 
-        if(strcmp(cityPm25 ->city, city) == 0){
-            printf("iterated %s %s pm2.5: %d \n", cityPm25 -> city, cityPm25 -> month, cityPm25 -> pm25);
-            cities_pm25[index++] = *(CityMonthPM25 *)cityPm25;
+        if(strcmp(cityPm25.city, city) == 0){
+            printf("iterated %s %s pm2.5: %d \n", cityPm25.city, cityPm25.month, cityPm25.pm25);
+            cities_pm25[index++] = cityPm25;
         }
     }
 
@@ -44,11 +44,11 @@ static size_t iterate_array_for_month(const apr_array_header_t *arr,
     int i;
     size_t index = 0;
     for (i = 0; i < arr->nelts; i++) {
-        const CityMonthPM25 *cityPm25 = ((const CityMonthPM25**)arr->elts)[i];
+        CityMonthPM25 cityPm25 = ((CityMonthPM25*)arr->elts)[i];
 
-        if(strcmp(cityPm25 -> month, month) == 0){
-            printf("%s %s pm2.5: %d \n", cityPm25 -> city, cityPm25 -> month, cityPm25 -> pm25);
-            cities_pm25[index++] = *(CityMonthPM25 *)cityPm25;
+        if(strcmp(cityPm25.month, month) == 0){
+            printf("%s %s pm2.5: %d \n", cityPm25.city, cityPm25.month, cityPm25.pm25);
+            cities_pm25[index++] = cityPm25;
         }
     }
 
@@ -91,7 +91,7 @@ void init_city_data(char* csv_data_file_name, apr_array_header_t *arr){
             current_city_pm25 -> month = strdup(month);
             current_city_pm25 -> pm25 = atoi(pm25);
             // push an element to the dynamic array:
-            *(const CityMonthPM25 **)apr_array_push(arr) = current_city_pm25;
+            *(CityMonthPM25 *)apr_array_push(arr) = *current_city_pm25;
         }
 
         /* freeing tokens */
@@ -141,11 +141,11 @@ int main (int argc, char **argv) {
   curl = curl_easy_init();
 
   /* Create a dynamic array of CityMonthPM25 */
-  arr = apr_array_make(mp, ARRAY_INIT_SZ, sizeof(const CityMonthPM25 *));
+  arr = apr_array_make(mp, ARRAY_INIT_SZ, sizeof(CityMonthPM25));
 
   init_city_data(filename, arr);
   
-  // Set the framework port number
+  // create web server service instance
   struct _u_instance instance;
   
   y_init_logs("pm25_rest_service", Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_DEBUG, NULL, "Starting pm25 service");
@@ -156,9 +156,7 @@ int main (int argc, char **argv) {
   }
   
   u_map_put(instance.default_headers, "Access-Control-Allow-Origin", "*");
-  
-  // Maximum body size sent by the client is 1 Kb
-  instance.max_post_body_size = 1024;
+  instance.max_post_body_size = 1024; // Maximum body size sent by the client: 1 Kb
 
   // Endpoint list declaration
   ulfius_add_endpoint_by_val(&instance, "GET", "pm25", "/history/*", 0, &callback_city_history, arr);
@@ -196,9 +194,8 @@ int main (int argc, char **argv) {
 }
 
 int callback_city_history (const struct _u_request * request, struct _u_response * response, void * user_data){
-  char * new_body;
+  // char * new_body;
   char * prefix = "/pm25/history/";
-
   char * city_name = substr(request->http_url, strlen(prefix), strlen(request->http_url));
 
   if(curl) {
@@ -206,22 +203,19 @@ int callback_city_history (const struct _u_request * request, struct _u_response
     char *decoded_city = curl_easy_unescape(curl, city_name, 0, &decodelen);
     if(decoded_city) {
       printf("city_name encoded:%s -> %s \n", city_name, decoded_city);
-      asprintf(&new_body, "<head><meta charset=\"UTF-8\"></head>\n url: %s history data for city: %s <br>", request->http_url, decoded_city);
+      // asprintf(&new_body, "<head><meta charset=\"UTF-8\"></head>\n url: %s history data for city: %s <br>", request->http_url, decoded_city);
       
       apr_array_header_t *arr = user_data;
-
+      // 分配到 cities_pm25 的空间大小大于实际存储的数据量 (2013年1月到2022年9月，<10年数据, 不到120个月)
       //CityMonthPM25 *cities_pm25   = calloc(120, sizeof(*cities_pm25));
       CityMonthPM25 *cities_pm25   = calloc(120, sizeof(CityMonthPM25));
 
       CityMonthPM25 *cities_pm25_ptr = cities_pm25;
       size_t element_count = iterate_array_for_city(arr, decoded_city, cities_pm25);
       
-
       printf("==== historical city pm2.5: %s count:%ld==== <br><br>\n", decoded_city, element_count);
-      // 分配到 cities_pm25 的空间数量大于实际存储的数据量 (2013年1月到2022年9月，<10年数据, 不到120个月)
-      // 处理 elementCount 条数据
       json_t *array = json_array();
-      while(element_count>0 && cities_pm25 && cities_pm25->month && cities_pm25->pm25)
+      while(element_count>0 && cities_pm25 && cities_pm25->month && cities_pm25->pm25) // 处理 elementCount 条数据
       {
         // char * old_body = new_body;
         // printf("month: %s pm2.5: %d <br>\n", cities_pm25->month, cities_pm25->pm25);
@@ -242,8 +236,8 @@ int callback_city_history (const struct _u_request * request, struct _u_response
       ulfius_set_json_body_response(response, 200, array);
       json_decref(array);
 
-      free(new_body);
-      new_body = NULL;
+      // free(new_body);
+      // new_body = NULL;
 
       // memory should be freed here:
       free(cities_pm25_ptr);

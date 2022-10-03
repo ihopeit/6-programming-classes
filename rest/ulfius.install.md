@@ -1,6 +1,17 @@
 ## Install on Linux:
 https://github.com/babelouest/ulfius/blob/master/INSTALL.md
 
+For Debian 11 bullseye:
+
+```
+$sudo apt install -y libmicrohttpd-dev libjansson-dev libcurl4-gnutls-dev libgnutls28-dev libgcrypt20-dev libsystemd-dev
+$sudo apt install libulfius-dev uwsc
+$sudo apt install libaprutil1 libaprutil1-dev
+$make -f Linux.Makefile
+
+```
+
+
 ## Install on Mac:
 brew install gnutls
 brew install libmicrohttpd

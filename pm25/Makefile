@@ -1,8 +1,8 @@
 all: pm25_sort_cmd pm25_service apr_array_demo
 
 CFLAGS   = -ggdb -Wall
-INCLUDE = -I /opt/homebrew/Cellar/apr/1.7.0_3/include/apr-1 
-LIBDIR = -L /opt/homebrew/Cellar/apr/1.7.0_3/lib 
+INCLUDE = -I /opt/homebrew/Cellar/apr/1.7.0_3/include/apr-1 -I /usr/include/apr-1.0/
+LIBDIR = -L /opt/homebrew/Cellar/apr/1.7.0_3/lib -L /usr/lib/x86_64-linux-gnu/
 LDFLAGS = -lapr-1 
 
 apr_array_demo:

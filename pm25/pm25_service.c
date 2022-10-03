@@ -1,3 +1,7 @@
+/* example CGI service, which could be run in command line, and in a CGI server like Apache HTTPD.
+ make
+ ./pm25_service 2022-09
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -90,7 +94,7 @@ int main(int argc, char** argv){
     apr_initialize();
     apr_pool_create(&mp, NULL);
 
-    /* Create a dynamic array of CityMonthPM25 */
+    /* Create a dynamic array of CityMonthPM25 *, 这个 array 里面存储指针 */
     arr = apr_array_make(mp, ARRAY_INIT_SZ, sizeof(const CityMonthPM25 *));
 
     if (argc > 1){
@@ -123,6 +127,7 @@ int main(int argc, char** argv){
         target_month, getenv("SERVER_NAME"));
     }
 
+    // 因为 arr 中存储的是指针， 这里分配内存，也按照指针大小分配内存，而不是按照结构体大小来分配
     CityMonthPM25 *cities_pm25 = calloc(12, sizeof(const CityMonthPM25 *));
     size_t element_count = iterate_array_for_month(arr, target_month, cities_pm25);
     CityMonthPM25 *head = cities_pm25;

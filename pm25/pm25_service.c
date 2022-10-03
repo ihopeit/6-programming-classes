@@ -127,8 +127,8 @@ int main(int argc, char** argv){
         target_month, getenv("SERVER_NAME"));
     }
 
-    // 因为 arr 中存储的是指针， 这里分配内存，也按照指针大小分配内存，而不是按照结构体大小来分配
-    CityMonthPM25 *cities_pm25 = calloc(12, sizeof(const CityMonthPM25 *));
+    // 虽然 arr 中存储的是指针， 这里按照结构体大小来分配内存，用来存储指定月份的数据
+    CityMonthPM25 *cities_pm25 = calloc(12, sizeof(CityMonthPM25));
     size_t element_count = iterate_array_for_month(arr, target_month, cities_pm25);
     CityMonthPM25 *head = cities_pm25;
 

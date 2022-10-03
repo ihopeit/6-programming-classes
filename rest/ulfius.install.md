@@ -13,20 +13,17 @@ $make -f Linux.Makefile
 
 
 ## Install on Mac:
-brew install gnutls
-brew install libmicrohttpd
+$ brew install gnutls libmicrohttpd
 
 编译 ulfius， 自动下载依赖:
 $ git clone https://github.com/babelouest/ulfius.git
 $ cd ulfius
-$ mkdir build
-$ cd build
+$ mkdir build && cd build
 $ cmake -DWITH_WEBSOCKET=off ..
 
 编译 orcania 之后， 拷贝到 /usr/local/lib 目录
 $ cd orcania-src/src
-$ make
-$ make install 
+$ make && make install 
 $ cp orcania-src/src/liborcania.so* /usr/local/lib
 $ cd ..
 
@@ -38,8 +35,7 @@ $ cp libyder.so* /usr/local/lib
 
 继续编译 ulfius:
 $ cd ../
-$ make
-$ make install # as admin
+$ make && make install
 
 
 ## Install on Windows

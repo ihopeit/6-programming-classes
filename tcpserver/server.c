@@ -1,3 +1,15 @@
+/*
+ * a TCP Server which reads text from client, and response with the text length
+ * nc localhost 8080
+ * @file server.c
+ * @author david
+ * @brief 
+ * @version 0.1
+ * @date 2023-02-05
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
 #include <stdio.h>
 #include <unistd.h> // for read(), write()
 #include <netdb.h>
@@ -13,7 +25,8 @@
 
 extern int errno ;
 
-void func(int connfd){ // 处理与客户端的通信，读取数据，相应内容
+// 处理与客户端的通信，读取输入字符串数据，计算字符串长度，并响应客户端
+void func(int connfd){ 
 	errno = 0; //to set errno to 0 at initializing
 	char buff[MAX], response[MAX];
 	int n;
@@ -26,7 +39,7 @@ void func(int connfd){ // 处理与客户端的通信，读取数据，相应内
 		read(connfd, buff, sizeof(buff));
 
 		// 计算读取到的文本长度，并且回复客户端计算出来的文本长度
-		snprintf(response, sizeof response, "input len:%lu", strlen(buff));
+		snprintf(response, sizeof response, "input len:%lu\n", strlen(buff));
 		write(connfd, response, sizeof(response));
 
 		int errnum = errno;
